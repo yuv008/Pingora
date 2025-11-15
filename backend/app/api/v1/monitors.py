@@ -68,9 +68,9 @@ async def create_monitor(
 
     logger.info("monitor_created", monitor_id=str(monitor.id), workspace_id=workspace_id)
 
-    # TODO: Trigger immediate check
-    # from app.workers.monitoring_tasks import execute_monitor_check
-    # execute_monitor_check.delay(str(monitor.id))
+    # Trigger immediate check
+    from app.workers.monitoring_tasks import execute_monitor_check
+    execute_monitor_check.delay(str(monitor.id), triggered_by="manual")
 
     return MonitorResponse.model_validate(monitor)
 
@@ -261,7 +261,9 @@ async def resume_monitor(
     monitor.next_check_at = datetime.utcnow()
     await db.commit()
 
-    # TODO: Trigger immediate check
+    # Trigger immediate check
+    from app.workers.monitoring_tasks import execute_monitor_check
+    execute_monitor_check.delay(str(monitor.id), triggered_by="manual")
 
     return {"message": "Monitor resumed"}
 
@@ -288,9 +290,9 @@ async def trigger_check(
             detail="Monitor not found"
         )
 
-    # TODO: Queue check task
-    # from app.workers.monitoring_tasks import execute_monitor_check
-    # task = execute_monitor_check.delay(str(monitor.id), triggered_by="manual")
+    # Queue check task
+    from app.workers.monitoring_tasks import execute_monitor_check
+    task = execute_monitor_check.delay(str(monitor.id), triggered_by="manual")
 
     return {"message": "Check triggered", "monitor_id": str(monitor.id)}
 
