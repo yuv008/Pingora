@@ -11,6 +11,7 @@ import {
   LayoutDashboard,
   Settings,
   MonitorCheck,
+  Globe,
 } from 'lucide-react';
 
 const navigation = [
@@ -25,19 +26,24 @@ const navigation = [
     icon: MonitorCheck,
   },
   {
+    name: 'Global Status',
+    href: '/dashboard/globe',
+    icon: Globe,
+  },
+  {
     name: 'Incidents',
     href: '/dashboard/incidents',
     icon: AlertTriangle,
   },
   {
-    name: 'Alerts',
-    href: '/dashboard/alerts',
-    icon: Bell,
-  },
-  {
     name: 'Analytics',
     href: '/dashboard/analytics',
     icon: BarChart3,
+  },
+  {
+    name: 'Alerts',
+    href: '/dashboard/alerts',
+    icon: Bell,
   },
   {
     name: 'Settings',

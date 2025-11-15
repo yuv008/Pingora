@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Pause, Play, Trash2, ExternalLink, RefreshCw } from 'lucide-react';
+import { Plus, Pause, Play, Trash2, ExternalLink, RefreshCw, Wifi } from 'lucide-react';
 import { formatRelativeTime, formatResponseTime } from '@/lib/utils';
 import { CreateMonitorDialog } from '@/components/dashboard/create-monitor-dialog';
+import { useMonitorUpdates, useWebSocket } from '@/lib/websocket-context';
 import type { Monitor } from '@/types/api';
 
 export default function MonitorsPage() {
@@ -17,6 +18,7 @@ export default function MonitorsPage() {
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { isConnected } = useWebSocket();
 
   // Fetch workspace
   useEffect(() => {
@@ -39,6 +41,16 @@ export default function MonitorsPage() {
     queryFn: () => (workspaceId ? monitorsApi.list(workspaceId) : []),
     enabled: !!workspaceId,
     refetchInterval: 30000, // Refetch every 30 seconds
+  });
+
+  // WebSocket real-time updates
+  useMonitorUpdates((data) => {
+    queryClient.invalidateQueries({ queryKey: ['monitors'] });
+    toast({
+      title: 'Monitor Updated',
+      description: `${data.name} status changed to ${data.status}`,
+      variant: data.status === 'up' ? 'success' : 'destructive',
+    });
   });
 
   // Pause monitor mutation
@@ -137,7 +149,15 @@ export default function MonitorsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">Monitors</h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-2xl font-bold tracking-tight">Monitors</h2>
+            {isConnected && (
+              <Badge variant="success" className="gap-1">
+                <Wifi className="h-3 w-3" />
+                Live
+              </Badge>
+            )}
+          </div>
           <p className="text-muted-foreground">Manage and monitor your API endpoints</p>
         </div>
         <Button onClick={() => setShowCreateDialog(true)}>
