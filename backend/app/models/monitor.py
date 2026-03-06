@@ -14,6 +14,7 @@ from sqlalchemy import (
     Text,
     BigInteger,
     Date,
+    Enum,
 )
 from sqlalchemy.dialects.postgresql import UUID, JSON, ARRAY
 from sqlalchemy.orm import relationship

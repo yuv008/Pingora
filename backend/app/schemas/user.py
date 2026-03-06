@@ -25,9 +25,18 @@ class UserRegister(BaseModel):
 
 
 class UserLogin(BaseModel):
-    """Schema for user login"""
-    email: EmailStr = Field(..., description="User email address")
+    """Schema for user login - accepts email or username"""
+    email: Optional[EmailStr] = Field(None, description="User email address")
+    username: Optional[str] = Field(None, description="Username")
     password: str = Field(..., description="Password")
+
+    @field_validator("email", mode="before")
+    @classmethod
+    def validate_email_or_username(cls, v, info):
+        """Ensure either email or username is provided"""
+        if not v and not info.data.get("username"):
+            raise ValueError("Either email or username must be provided")
+        return v
 
 
 class UserUpdate(BaseModel):

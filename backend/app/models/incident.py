@@ -2,7 +2,7 @@
 Incident models for tracking monitor failures and outages
 """
 import enum
-from sqlalchemy import Column, String, Integer, ForeignKey, Index, DateTime, Text, Boolean
+from sqlalchemy import Column, String, Integer, ForeignKey, Index, DateTime, Text, Boolean, Enum
 from sqlalchemy.dialects.postgresql import UUID, JSON
 from sqlalchemy.orm import relationship
 from app.models.base import Base

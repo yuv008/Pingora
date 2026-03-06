@@ -2,7 +2,7 @@
 Alert models for multi-channel alerting system
 """
 import enum
-from sqlalchemy import Column, String, Integer, ForeignKey, Index, DateTime, Text, Boolean
+from sqlalchemy import Column, String, Integer, ForeignKey, Index, DateTime, Text, Boolean, Enum
 from sqlalchemy.dialects.postgresql import UUID, JSON
 from sqlalchemy.orm import relationship
 from app.models.base import Base
@@ -62,8 +62,8 @@ class AlertChannel(Base):
 
     # Relationships
     workspace = relationship("Workspace", back_populates="alert_channels")
-    alert_rules = relationship("AlertRule", back_populates="alert_channel")
-    alert_logs = relationship("AlertLog", back_populates="alert_channel")
+    alert_rules = relationship("AlertRule", back_populates="alert_channel", foreign_keys="AlertRule.alert_channel_id")
+    alert_logs = relationship("AlertLog", back_populates="alert_channel", foreign_keys="AlertLog.alert_channel_id")
 
     # Indexes
     __table_args__ = (
@@ -164,7 +164,7 @@ class AlertLog(Base):
     response_time_ms = Column(Integer)
 
     # Metadata
-    metadata = Column(JSON, default={})
+    alert_metadata = Column(JSON, default={})
 
     # Relationships
     incident = relationship("Incident", back_populates="alert_logs")

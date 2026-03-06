@@ -51,7 +51,10 @@ class User(Base):
     # Relationships
     sessions = relationship("UserSession", back_populates="user", cascade="all, delete-orphan")
     workspace_memberships = relationship(
-        "WorkspaceMember", back_populates="user", cascade="all, delete-orphan"
+        "WorkspaceMember",
+        back_populates="user",
+        foreign_keys="WorkspaceMember.user_id",
+        cascade="all, delete-orphan"
     )
 
     # Indexes

@@ -160,16 +160,21 @@ async def login(
     - Creates new session
     - Returns access and refresh tokens
     """
-    # Get user by email
-    result = await db.execute(
-        select(User).where(User.email == credentials.email)
-    )
+    # Get user by email or username
+    if credentials.email:
+        result = await db.execute(
+            select(User).where(User.email == credentials.email)
+        )
+    else:
+        result = await db.execute(
+            select(User).where(User.username == credentials.username)
+        )
     user = result.scalar_one_or_none()
 
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password"
+            detail="Incorrect email/username or password"
         )
 
     # Check if account is locked
